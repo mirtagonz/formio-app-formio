@@ -1,5 +1,5 @@
-var APP_URL = '/';
-var API_URL = '/';
+var APP_URL = location.protocol + "//" + location.host;
+var API_URL = location.protocol + "//" + location.host;
 
 // Parse query string
 var query = {};

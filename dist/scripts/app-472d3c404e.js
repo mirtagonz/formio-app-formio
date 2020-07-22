@@ -1,1 +1,160 @@
-!function(){"use strict";angular.module("formioApp",["ngSanitize","ui.router","ui.bootstrap","ui.bootstrap.accordion","ui.bootstrap.alert","ngFormioHelper","ngFormBuilderHelper","bgf.paginateAnything","formio","ngMap"])}(),function(){"use strict";angular.module("formioApp").run(["$rootScope","AppConfig","Formio","FormioAuth",function(r,e,o,t){t.init(),o.Templates.framework="bootstrap3",angular.forEach(e.forms,function(e,o){r[o]=e})}])}(),function(){"use strict";function r(r,e,o,t){r.state("home",{url:"/",templateUrl:"views/main.html",controller:["$scope",function(r){r.searchTypes=[{name:"name",title:"Name"},{name:"title",title:"Title"},{name:"tags",title:"Tags"}],r.resources=[],r.resourcesUrl=o.appUrl+"/form?type=resource",r.resourcesUrlParams={},r.resourcesLoading=!0,r.resourcesSearch="",r.resourcesSearchType="name",r.forms=[],r.formsUrl=o.appUrl+"/form?type=form",r.formsUrlParams={},r.formsLoading=!0,r.formsSearch="",r.formsSearchType="name",r.formsPerPage=5,r.$on("pagination:loadPage",function(e,o,t){-1!==t.url.indexOf("type=resource")&&(r.resourcesLoading=!1),-1!==t.url.indexOf("type=form")&&(r.formsLoading=!1)}),r.updateResourceSearch=function(){var e={};if(r.resourcesSearch.length>0){var o=r.resourcesSearchType+"__regex";e[o]="/"+r.resourcesSearch+"/i"}r.resourcesUrlParams=e},r.updateFormSearch=function(){var e={};if(r.formsSearch.length>0){var o=r.formsSearchType+"__regex";e[o]="/"+r.formsSearch+"/i"}r.formsUrlParams=e}}]}),t.register("",o.appUrl,{}),e.otherwise("/")}r.$inject=["$stateProvider","$urlRouterProvider","AppConfig","FormioFormBuilderProvider"],angular.module("formioApp").config(r)}(),function(){"use strict";angular.module("formioApp").constant("moment",moment)}(),function(){"use strict";angular.module("formioApp").config(["AppConfig","FormioProvider","FormioAuthProvider","$locationProvider",function(r,e,o,t){t.hashPrefix(""),e.setAppUrl(r.appUrl),e.setApiUrl(r.apiUrl),o.setForceAuth(!0),o.setStates("auth.login","home"),o.register("login","user","login")}])}();
+(function() {
+  'use strict';
+  angular
+    .module('formioApp', [
+      'ngSanitize',
+      'ui.router',
+      'ui.bootstrap',
+      'ui.bootstrap.accordion',
+      'ui.bootstrap.alert',
+      'ngFormioHelper',
+      'ngFormBuilderHelper',
+      'bgf.paginateAnything',
+      'formio',
+      'ngMap'
+    ]);
+})();
+
+(function() {
+  'use strict';
+  angular
+    .module('formioApp')
+    .run([
+      '$rootScope',
+      'AppConfig',
+      'Formio',
+      'FormioAuth',
+      function(
+        $rootScope,
+        AppConfig,
+        Formio,
+        FormioAuth
+      ) {
+        // Initialize the Form.io authentication system.
+        FormioAuth.init();
+
+        // Example of overriding templates.
+        Formio.Templates.framework = 'bootstrap3';
+
+        // Add the forms to the root scope.
+        angular.forEach(AppConfig.forms, function(url, form) {
+          $rootScope[form] = url;
+        });
+      }
+    ]);
+})();
+
+(function() {
+  'use strict';
+  routeConfig.$inject = ["$stateProvider", "$urlRouterProvider", "AppConfig", "FormioFormBuilderProvider"];
+  angular
+    .module('formioApp')
+    .config(routeConfig);
+
+  /** @ngInject */
+  function routeConfig(
+    $stateProvider,
+    $urlRouterProvider,
+    AppConfig,
+    FormioFormBuilderProvider
+  ) {
+    $stateProvider
+      .state('home', {
+        url: '/',
+        templateUrl: 'views/main.html',
+        controller: ['$scope', function($scope) {
+          $scope.searchTypes = [
+            {
+              name: 'name',
+              title: 'Name'
+            },
+            {
+              name: 'title',
+              title: 'Title'
+            },
+            {
+              name: 'tags',
+              title: 'Tags'
+            }
+          ];
+          $scope.resources = [];
+          $scope.resourcesUrl = AppConfig.appUrl + '/form?type=resource';
+          $scope.resourcesUrlParams = {};
+          $scope.resourcesLoading = true;
+          $scope.resourcesSearch = '';
+          $scope.resourcesSearchType = 'name';
+          $scope.forms = [];
+          $scope.formsUrl = AppConfig.appUrl + '/form?type=form';
+          $scope.formsUrlParams = {};
+          $scope.formsLoading = true;
+          $scope.formsSearch = '';
+          $scope.formsSearchType = 'name';
+          $scope.formsPerPage = 5;
+          $scope.$on('pagination:loadPage', function (event, status, config) {
+            if (config.url.indexOf('type=resource') !== -1) {
+              $scope.resourcesLoading = false;
+            }
+            if (config.url.indexOf('type=form') !== -1) {
+              $scope.formsLoading = false;
+            }
+          });
+          $scope.updateResourceSearch = function() {
+            var params = {};
+            if ($scope.resourcesSearch.length > 0) {
+              var paramName = $scope.resourcesSearchType+'__regex';
+              params[paramName] = '/'+$scope.resourcesSearch+'/i';
+            }
+            $scope.resourcesUrlParams = params;
+          };
+          $scope.updateFormSearch = function() {
+            var params = {};
+            if ($scope.formsSearch.length > 0) {
+              var paramName = $scope.formsSearchType+'__regex';
+              params[paramName] = '/'+$scope.formsSearch+'/i';
+            }
+            $scope.formsUrlParams = params;
+          };
+        }]
+      });
+
+    // Register the form builder provider.
+    FormioFormBuilderProvider.register('', AppConfig.appUrl, {});
+
+    // Register the form routes.
+    $urlRouterProvider.otherwise('/');
+  }
+
+})();
+
+/* global moment:false */
+(function() {
+  'use strict';
+  angular
+    .module('formioApp')
+    .constant('moment', moment);
+})();
+
+(function() {
+  'use strict';
+  angular
+    .module('formioApp')
+    .config([
+      'AppConfig',
+      'FormioProvider',
+      'FormioAuthProvider',
+      '$locationProvider',
+      function(
+        AppConfig,
+        FormioProvider,
+        FormioAuthProvider,
+        $locationProvider
+      ) {
+        $locationProvider.hashPrefix('');
+        FormioProvider.setAppUrl(AppConfig.appUrl);
+        FormioProvider.setApiUrl(AppConfig.apiUrl);
+        FormioAuthProvider.setForceAuth(true);
+        FormioAuthProvider.setStates('auth.login', 'home');
+        FormioAuthProvider.register('login', 'user', 'login');
+      }
+    ]);
+})();
