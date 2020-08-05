@@ -8,6 +8,25 @@
 
 var gulp = require('gulp');
 var wrench = require('wrench');
+var browserSync = require('browser-sync').create();
+var reload      = browserSync.reload;
+
+/**
+ *  Launches a browsersync server on por 4000
+ */
+function browserSyncTask() {
+  browserSync.init(['./dist/**/**.**'], {
+    server: "./dist",
+    port: 4000,
+    notify: false,
+    open: false,
+    ui: {
+      port: 4001
+    }
+  });
+  gulp.watch("dist/index.html").on("change", reload);
+}
+
 
 /**
  *  This will load all js or coffee files in the gulp directory
@@ -21,9 +40,18 @@ wrench.readdirSyncRecursive('./gulp').filter(function(file) {
 
 
 /**
- *  Default task clean temporaries directories and launch the
+ *  Package task clean temporaries directories and launch the
  *  main optimization build task
  */
-gulp.task('default', ['clean'], function () {
+gulp.task('package', ['clean'], function () {
   gulp.start('build');
 });
+
+/**
+ *  Default task launches a browsersync server
+ */
+gulp.task('default', function () {
+  browserSyncTask();
+});
+
+
