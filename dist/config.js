@@ -1,5 +1,5 @@
-var APP_URL = 'https://example.form.io';
-var API_URL = 'https://api.form.io';
+var APP_URL = location.protocol + "//" + location.host;
+var API_URL = location.protocol + "//" + location.host;
 
 // Parse query string
 var query = {};
